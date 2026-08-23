@@ -1,5 +1,5 @@
 ---
-applyTo: '**'
+applyTo: "**"
 ---
 
 When a user asks for a changeset to be generated, follow the following rules:

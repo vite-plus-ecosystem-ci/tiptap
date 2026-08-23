@@ -35,7 +35,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           pnpm-version: ${{ env.PNPM_VERSION }}
           store-dir: ${{ env.PNPM_STORE_DIR }}
-          cache: 'true'
+          cache: "true"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --strict-peer-dependencies

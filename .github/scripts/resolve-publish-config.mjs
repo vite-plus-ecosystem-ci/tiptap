@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import { readFileSync } from 'node:fs'
-import { join, dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { readFileSync } from "node:fs";
+import { join, dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const DEFAULT_CONFIG_PATH = join(__dirname, '..', 'publish-config.json')
-const REQUIRED_FIELDS = ['distTag', 'label', 'title', 'commit']
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DEFAULT_CONFIG_PATH = join(__dirname, "..", "publish-config.json");
+const REQUIRED_FIELDS = ["distTag", "label", "title", "commit"];
 
 /** @typedef {{ distTag: string, label: string, title: string, commit: string }} BranchEntry */
 
@@ -17,9 +17,9 @@ const REQUIRED_FIELDS = ['distTag', 'label', 'title', 'commit']
  */
 function readConfig(configPath) {
   try {
-    return JSON.parse(readFileSync(configPath, 'utf8'))
+    return JSON.parse(readFileSync(configPath, "utf8"));
   } catch (err) {
-    throw new Error(`Failed to read or parse ${configPath}: ${err.message}`)
+    throw new Error(`Failed to read or parse ${configPath}: ${err.message}`);
   }
 }
 
@@ -28,8 +28,8 @@ function readConfig(configPath) {
  * @param {object} config
  */
 function requireBranchesObject(config) {
-  if (!config.branches || typeof config.branches !== 'object' || Array.isArray(config.branches)) {
-    throw new Error('publish-config.json must contain a "branches" object')
+  if (!config.branches || typeof config.branches !== "object" || Array.isArray(config.branches)) {
+    throw new Error('publish-config.json must contain a "branches" object');
   }
 }
 
@@ -40,10 +40,10 @@ function requireBranchesObject(config) {
  */
 function requireValidEntry(branch, entry) {
   for (const field of REQUIRED_FIELDS) {
-    if (!entry[field] || typeof entry[field] !== 'string') {
+    if (!entry[field] || typeof entry[field] !== "string") {
       throw new Error(
         `Branch "${branch}" is missing required string field "${field}" in publish-config.json`,
-      )
+      );
     }
   }
 }
@@ -58,15 +58,15 @@ function requireValidEntry(branch, entry) {
  * @throws {Error} When the config cannot be read/parsed or a required field is missing.
  */
 export function resolveConfig(branch, configPath = DEFAULT_CONFIG_PATH) {
-  const config = readConfig(configPath)
-  requireBranchesObject(config)
+  const config = readConfig(configPath);
+  requireBranchesObject(config);
 
-  const entry = config.branches[branch]
+  const entry = config.branches[branch];
   if (!entry) {
-    return { configured: false }
+    return { configured: false };
   }
 
-  requireValidEntry(branch, entry)
+  requireValidEntry(branch, entry);
 
   return {
     configured: true,
@@ -74,30 +74,30 @@ export function resolveConfig(branch, configPath = DEFAULT_CONFIG_PATH) {
     label: entry.label,
     title: entry.title,
     commit: entry.commit,
-  }
+  };
 }
 
 // ── CLI entry point ───────────────────────────────────────────
 // When run as `node resolve-publish-config.mjs <branch>`, emits
 // key=value lines suitable for GitHub Actions step outputs.
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const branch = process.argv[2]
+  const branch = process.argv[2];
   if (!branch) {
-    console.error('Usage: node resolve-publish-config.mjs <branch-name> [config-path]')
-    process.exit(1)
+    console.error("Usage: node resolve-publish-config.mjs <branch-name> [config-path]");
+    process.exit(1);
   }
 
-  const configPath = process.argv[3] || DEFAULT_CONFIG_PATH
+  const configPath = process.argv[3] || DEFAULT_CONFIG_PATH;
 
   try {
-    const result = resolveConfig(branch, configPath)
+    const result = resolveConfig(branch, configPath);
     for (const [key, value] of Object.entries(result)) {
       // Convert camelCase to snake_case for GitHub Actions output keys
-      const actionsKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)
-      console.log(`${actionsKey}=${value}`)
+      const actionsKey = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+      console.log(`${actionsKey}=${value}`);
     }
   } catch (err) {
-    console.error(err.message)
-    process.exit(1)
+    console.error(err.message);
+    process.exit(1);
   }
 }

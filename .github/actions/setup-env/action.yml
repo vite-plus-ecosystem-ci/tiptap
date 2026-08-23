@@ -10,11 +10,11 @@ inputs:
     required: true
   store-dir:
     description: Relative pnpm store directory within the workspace. Empty uses the default pnpm store.
-    default: ''
+    default: ""
     required: false
   cache:
     description: Whether to use setup-vp's dependency caching (pass literal string `'true'` to enable)
-    default: 'false'
+    default: "false"
     required: false
 
 runs:

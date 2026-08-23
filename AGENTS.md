@@ -50,31 +50,31 @@ Prefer simple, readable code over clever code. Use early returns. Avoid deep nes
 
 ```ts
 // good
-items.map((item, index) => createNode(item, index))
-decorations.filter(decoration => decoration.visible)
+items.map((item, index) => createNode(item, index));
+decorations.filter((decoration) => decoration.visible);
 
 // bad
-items.map((i, idx) => createNode(i, idx))
-decorations.filter(d => d.visible)
+items.map((i, idx) => createNode(i, idx));
+decorations.filter((d) => d.visible);
 ```
 
 ### Comments
 
 Comments are a last resort. Prefer code that explains itself through clear names, structure, and small functions.
 
-* Default to **no comment**.
-* Comment only when the **reason for a decision is not apparent from the code**.
-* Keep comments **short, local, and intent-focused**.
-* Prefer a short one-line fragment or sentence.
-* Never restate what the code does.
-* Never narrate control flow.
-* Never explain surrounding architecture, history, edge cases, or implementation details unless they are essential to understanding the decision.
-* Never use comments as a substitute for clearer code, naming, or structure.
-* Do not write prose paragraphs, mini-documentation, or essay-style explanations in implementation code.
-* Do not add examples, scenarios, or parenthetical explanations to comments.
-* Do not use multi-line comments just because an explanation can be written. If it cannot be expressed concisely, reconsider whether the comment belongs in the code at all.
-* Existing verbose comments are not a style precedent. Do not imitate them.
-* When modifying code, remove comments that merely describe code made obvious by the change.
+- Default to **no comment**.
+- Comment only when the **reason for a decision is not apparent from the code**.
+- Keep comments **short, local, and intent-focused**.
+- Prefer a short one-line fragment or sentence.
+- Never restate what the code does.
+- Never narrate control flow.
+- Never explain surrounding architecture, history, edge cases, or implementation details unless they are essential to understanding the decision.
+- Never use comments as a substitute for clearer code, naming, or structure.
+- Do not write prose paragraphs, mini-documentation, or essay-style explanations in implementation code.
+- Do not add examples, scenarios, or parenthetical explanations to comments.
+- Do not use multi-line comments just because an explanation can be written. If it cannot be expressed concisely, reconsider whether the comment belongs in the code at all.
+- Existing verbose comments are not a style precedent. Do not imitate them.
+- When modifying code, remove comments that merely describe code made obvious by the change.
 
 Prefer:
 
@@ -143,7 +143,7 @@ Run `pnpm changeset`, or write the file yourself as `.changeset/YYYY-MM-DD-short
 
 ```markdown
 ---
-'@tiptap/core': patch
+"@tiptap/core": patch
 ---
 
 One short sentence on what changed for the user.
