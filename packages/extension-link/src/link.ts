@@ -1,13 +1,13 @@
-import type { PasteRuleMatch } from '@tiptap/core'
-import { Mark, markPasteRule, mergeAttributes } from '@tiptap/core'
-import type { Plugin } from '@tiptap/pm/state'
-import { find, registerCustomProtocol, reset } from 'linkifyjs'
+import type { PasteRuleMatch } from "@tiptap/core";
+import { Mark, markPasteRule, mergeAttributes } from "@tiptap/core";
+import type { Plugin } from "@tiptap/pm/state";
+import { find, registerCustomProtocol, reset } from "linkifyjs";
 
-import { autolink } from './helpers/autolink.js'
-import { clickHandler } from './helpers/clickHandler.js'
-import { markdownLinkInputRule, markdownLinkPasteRule } from './helpers/markdownLink.js'
-import { pasteHandler } from './helpers/pasteHandler.js'
-import { UNICODE_WHITESPACE_REGEX_GLOBAL } from './helpers/whitespace.js'
+import { autolink } from "./helpers/autolink.js";
+import { clickHandler } from "./helpers/clickHandler.js";
+import { markdownLinkInputRule, markdownLinkPasteRule } from "./helpers/markdownLink.js";
+import { pasteHandler } from "./helpers/pasteHandler.js";
+import { UNICODE_WHITESPACE_REGEX_GLOBAL } from "./helpers/whitespace.js";
 
 export interface LinkProtocolOptions {
   /**
@@ -16,23 +16,23 @@ export interface LinkProtocolOptions {
    * @example 'ftp'
    * @example 'git'
    */
-  scheme: string
+  scheme: string;
 
   /**
    * If enabled, it allows optional slashes after the protocol.
    * @default false
    * @example true
    */
-  optionalSlashes?: boolean
+  optionalSlashes?: boolean;
 }
 
 export const pasteRegex =
-  /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z]{2,}\b(?:[-a-zA-Z0-9@:%._+~#=?!&/]*)(?:[-a-zA-Z0-9@:%._+~#=?!&/]*)/gi
+  /https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z]{2,}\b(?:[-a-zA-Z0-9@:%._+~#=?!&/]*)(?:[-a-zA-Z0-9@:%._+~#=?!&/]*)/gi;
 
 /**
  * @deprecated The default behavior is now to open links when the editor is not editable.
  */
-type DeprecatedOpenWhenNotEditable = 'whenNotEditable'
+type DeprecatedOpenWhenNotEditable = "whenNotEditable";
 
 export interface LinkOptions {
   /**
@@ -40,38 +40,38 @@ export interface LinkOptions {
    * @default true
    * @example false
    */
-  autolink: boolean
+  autolink: boolean;
 
   /**
    * An array of custom protocols to be registered with linkifyjs.
    * @default []
    * @example ['ftp', 'git']
    */
-  protocols: Array<LinkProtocolOptions | string>
+  protocols: Array<LinkProtocolOptions | string>;
 
   /**
    * Default protocol to use when no protocol is specified.
    * @default 'http'
    */
-  defaultProtocol: string
+  defaultProtocol: string;
   /**
    * If enabled, links will be opened on click.
    * @default true
    * @example false
    */
-  openOnClick: boolean | DeprecatedOpenWhenNotEditable
+  openOnClick: boolean | DeprecatedOpenWhenNotEditable;
   /**
    * If enabled, the link will be selected when clicked.
    * @default false
    * @example true
    */
-  enableClickSelection: boolean
+  enableClickSelection: boolean;
   /**
    * Adds a link to the current selection if the pasted content only contains an url.
    * @default true
    * @example false
    */
-  linkOnPaste: boolean
+  linkOnPaste: boolean;
 
   /**
    * If enabled, typing or pasting the Markdown link syntax, e.g. `[Tiptap](https://tiptap.dev)`
@@ -79,14 +79,14 @@ export interface LinkOptions {
    * @default false
    * @example true
    */
-  markdownLinks: boolean
+  markdownLinks: boolean;
 
   /**
    * HTML attributes to add to the link element.
    * @default {}
    * @example { class: 'foo' }
    */
-  HTMLAttributes: Record<string, any>
+  HTMLAttributes: Record<string, any>;
 
   /**
    * @deprecated Use the `shouldAutoLink` option instead.
@@ -94,7 +94,7 @@ export interface LinkOptions {
    * @param url - The url to be validated.
    * @returns - True if the url is valid, false otherwise.
    */
-  validate: (url: string) => boolean
+  validate: (url: string) => boolean;
 
   /**
    * A validation function which is used for configuring link verification for preventing XSS attacks.
@@ -116,17 +116,17 @@ export interface LinkOptions {
       /**
        * The default validation function.
        */
-      defaultValidate: (url: string) => boolean
+      defaultValidate: (url: string) => boolean;
       /**
        * An array of allowed protocols for the URL (e.g., "http", "https"). As defined in the `protocols` option.
        */
-      protocols: Array<LinkProtocolOptions | string>
+      protocols: Array<LinkProtocolOptions | string>;
       /**
        * A string that represents the default protocol (e.g., 'http'). As defined in the `defaultProtocol` option.
        */
-      defaultProtocol: string
+      defaultProtocol: string;
     },
-  ) => boolean
+  ) => boolean;
 
   /**
    * Determines whether a valid link should be automatically linked in the content.
@@ -134,10 +134,10 @@ export interface LinkOptions {
    * @param {string} url - The URL that has already been validated.
    * @returns {boolean} - True if the link should be auto-linked; false if it should not be auto-linked.
    */
-  shouldAutoLink: (url: string) => boolean
+  shouldAutoLink: (url: string) => boolean;
 }
 
-declare module '@tiptap/core' {
+declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     link: {
       /**
@@ -146,70 +146,70 @@ declare module '@tiptap/core' {
        * @example editor.commands.setLink({ href: 'https://tiptap.dev' })
        */
       setLink: (attributes: {
-        href: string
-        target?: string | null
-        rel?: string | null
-        class?: string | null
-        title?: string | null
-      }) => ReturnType
+        href: string;
+        target?: string | null;
+        rel?: string | null;
+        class?: string | null;
+        title?: string | null;
+      }) => ReturnType;
       /**
        * Toggle a link mark
        * @param attributes The link attributes
        * @example editor.commands.toggleLink({ href: 'https://tiptap.dev' })
        */
       toggleLink: (attributes?: {
-        href: string
-        target?: string | null
-        rel?: string | null
-        class?: string | null
-        title?: string | null
-      }) => ReturnType
+        href: string;
+        target?: string | null;
+        rel?: string | null;
+        class?: string | null;
+        title?: string | null;
+      }) => ReturnType;
       /**
        * Unset a link mark
        * @example editor.commands.unsetLink()
        */
-      unsetLink: () => ReturnType
-    }
+      unsetLink: () => ReturnType;
+    };
   }
 }
 
-export function isAllowedUri(uri: string | undefined, protocols?: LinkOptions['protocols']) {
+export function isAllowedUri(uri: string | undefined, protocols?: LinkOptions["protocols"]) {
   const allowedProtocols: string[] = [
-    'http',
-    'https',
-    'ftp',
-    'ftps',
-    'mailto',
-    'tel',
-    'callto',
-    'sms',
-    'cid',
-    'xmpp',
-  ]
+    "http",
+    "https",
+    "ftp",
+    "ftps",
+    "mailto",
+    "tel",
+    "callto",
+    "sms",
+    "cid",
+    "xmpp",
+  ];
 
   if (protocols) {
-    protocols.forEach(protocol => {
-      const nextProtocol = typeof protocol === 'string' ? protocol : protocol.scheme
+    protocols.forEach((protocol) => {
+      const nextProtocol = typeof protocol === "string" ? protocol : protocol.scheme;
 
       if (nextProtocol) {
-        allowedProtocols.push(nextProtocol)
+        allowedProtocols.push(nextProtocol);
       }
-    })
+    });
   }
 
   return (
     !uri ||
     uri
-      .replace(UNICODE_WHITESPACE_REGEX_GLOBAL, '')
+      .replace(UNICODE_WHITESPACE_REGEX_GLOBAL, "")
       .match(
         new RegExp(
           `^(?:(?:${allowedProtocols
-            .map(protocol => protocol.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'))
-            .join('|')}):|[^a-z]|[a-z0-9+.\\-]+(?:[^a-z+.\\-:]|$))`,
-          'i',
+            .map((protocol) => protocol.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&"))
+            .join("|")}):|[^a-z]|[a-z0-9+.\\-]+(?:[^a-z+.\\-:]|$))`,
+          "i",
         ),
       )
-  )
+  );
 }
 
 /**
@@ -217,7 +217,7 @@ export function isAllowedUri(uri: string | undefined, protocols?: LinkOptions['p
  * @see https://www.tiptap.dev/api/marks/link
  */
 export const Link = Mark.create<LinkOptions>({
-  name: 'link',
+  name: "link",
 
   priority: 1000,
 
@@ -229,26 +229,26 @@ export const Link = Mark.create<LinkOptions>({
     // TODO: v4 - remove validate option
     if (this.options.validate && !this.options.shouldAutoLink) {
       // Copy the validate function to the shouldAutoLink option
-      this.options.shouldAutoLink = this.options.validate
+      this.options.shouldAutoLink = this.options.validate;
       console.warn(
-        'The `validate` option is deprecated. Rename to the `shouldAutoLink` option instead.',
-      )
+        "The `validate` option is deprecated. Rename to the `shouldAutoLink` option instead.",
+      );
     }
-    this.options.protocols.forEach(protocol => {
-      if (typeof protocol === 'string') {
-        registerCustomProtocol(protocol)
-        return
+    this.options.protocols.forEach((protocol) => {
+      if (typeof protocol === "string") {
+        registerCustomProtocol(protocol);
+        return;
       }
-      registerCustomProtocol(protocol.scheme, protocol.optionalSlashes)
-    })
+      registerCustomProtocol(protocol.scheme, protocol.optionalSlashes);
+    });
   },
 
   onDestroy() {
-    reset()
+    reset();
   },
 
   inclusive() {
-    return this.options.autolink
+    return this.options.autolink;
   },
 
   addOptions() {
@@ -259,38 +259,38 @@ export const Link = Mark.create<LinkOptions>({
       markdownLinks: false, // TODO (major) - default to true on next major version
       autolink: true,
       protocols: [],
-      defaultProtocol: 'http',
+      defaultProtocol: "http",
       HTMLAttributes: {
-        target: '_blank',
-        rel: 'noopener noreferrer nofollow',
+        target: "_blank",
+        rel: "noopener noreferrer nofollow",
         class: null,
       },
       isAllowedUri: (url, ctx) => !!isAllowedUri(url, ctx.protocols),
-      validate: url => !!url,
-      shouldAutoLink: url => {
+      validate: (url) => !!url,
+      shouldAutoLink: (url) => {
         // URLs with explicit protocols (e.g., https://) should be auto-linked
         // But not if @ appears before :// (that would be userinfo like user:pass@host)
-        const hasProtocol = /^[a-z][a-z0-9+.-]*:\/\//i.test(url)
-        const hasMaybeProtocol = /^[a-z][a-z0-9+.-]*:/i.test(url)
+        const hasProtocol = /^[a-z][a-z0-9+.-]*:\/\//i.test(url);
+        const hasMaybeProtocol = /^[a-z][a-z0-9+.-]*:/i.test(url);
 
-        if (hasProtocol || (hasMaybeProtocol && !url.includes('@'))) {
-          return true
+        if (hasProtocol || (hasMaybeProtocol && !url.includes("@"))) {
+          return true;
         }
         // Strip userinfo (user:pass@) if present, then extract hostname
-        const urlWithoutUserinfo = url.includes('@') ? url.split('@').pop()! : url
-        const hostname = urlWithoutUserinfo.split(/[/?#:]/)[0]
+        const urlWithoutUserinfo = url.includes("@") ? url.split("@").pop()! : url;
+        const hostname = urlWithoutUserinfo.split(/[/?#:]/)[0];
 
         // Don't auto-link IP addresses without protocol
         if (/^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)) {
-          return false
+          return false;
         }
         // Don't auto-link single-word hostnames without TLD (e.g., "localhost")
         if (!/\./.test(hostname)) {
-          return false
+          return false;
         }
-        return true
+        return true;
       },
-    }
+    };
   },
 
   addAttributes() {
@@ -298,7 +298,7 @@ export const Link = Mark.create<LinkOptions>({
       href: {
         default: null,
         parseHTML(element) {
-          return element.getAttribute('href')
+          return element.getAttribute("href");
         },
       },
       target: {
@@ -316,106 +316,110 @@ export const Link = Mark.create<LinkOptions>({
       title: {
         default: null,
       },
-    }
+    };
   },
 
   parseHTML() {
     return [
       {
-        tag: 'a[href]',
-        getAttrs: dom => {
-          const href = (dom as HTMLElement).getAttribute('href')
+        tag: "a[href]",
+        getAttrs: (dom) => {
+          const href = (dom as HTMLElement).getAttribute("href");
 
           // prevent XSS attacks
           if (
             !href ||
             !this.options.isAllowedUri(href, {
-              defaultValidate: url => !!isAllowedUri(url, this.options.protocols),
+              defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
               protocols: this.options.protocols,
               defaultProtocol: this.options.defaultProtocol,
             })
           ) {
-            return false
+            return false;
           }
-          return null
+          return null;
         },
       },
-    ]
+    ];
   },
 
   renderHTML({ HTMLAttributes }) {
     // prevent XSS attacks
     if (
       !this.options.isAllowedUri(HTMLAttributes.href, {
-        defaultValidate: href => !!isAllowedUri(href, this.options.protocols),
+        defaultValidate: (href) => !!isAllowedUri(href, this.options.protocols),
         protocols: this.options.protocols,
         defaultProtocol: this.options.defaultProtocol,
       })
     ) {
       // strip out the href
-      return ['a', mergeAttributes(this.options.HTMLAttributes, { ...HTMLAttributes, href: '' }), 0]
+      return [
+        "a",
+        mergeAttributes(this.options.HTMLAttributes, { ...HTMLAttributes, href: "" }),
+        0,
+      ];
     }
 
-    return ['a', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0]
+    return ["a", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
   },
 
-  markdownTokenName: 'link',
+  markdownTokenName: "link",
 
   parseMarkdown: (token, helpers) => {
-    return helpers.applyMark('link', helpers.parseInline(token.tokens || []), {
+    return helpers.applyMark("link", helpers.parseInline(token.tokens || []), {
       href: token.href,
       title: token.title || null,
-    })
+    });
   },
 
   renderMarkdown: (node, h) => {
-    const href = node.attrs?.href ?? ''
-    const title = node.attrs?.title ?? ''
-    const text = h.renderChildren(node)
+    const href = node.attrs?.href ?? "";
+    const title = node.attrs?.title ?? "";
+    const text = h.renderChildren(node);
 
-    return title ? `[${text}](${href} "${title}")` : `[${text}](${href})`
+    return title ? `[${text}](${href} "${title}")` : `[${text}](${href})`;
   },
 
   addCommands() {
     return {
       setLink:
-        attributes =>
+        (attributes) =>
         ({ chain }) => {
-          const { href } = attributes
+          const { href } = attributes;
 
           if (
             !this.options.isAllowedUri(href, {
-              defaultValidate: url => !!isAllowedUri(url, this.options.protocols),
+              defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
               protocols: this.options.protocols,
               defaultProtocol: this.options.defaultProtocol,
             })
           ) {
-            return false
+            return false;
           }
 
-          return chain().setMark(this.name, attributes).setMeta('preventAutolink', true).run()
+          return chain().setMark(this.name, attributes).setMeta("preventAutolink", true).run();
         },
 
       toggleLink:
-        attributes =>
+        (attributes) =>
         ({ chain }) => {
-          const { href } = attributes || {}
+          const { href } = attributes || {};
 
           if (
             href &&
             !this.options.isAllowedUri(href, {
-              defaultValidate: url => !!isAllowedUri(url, this.options.protocols),
+              defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
               protocols: this.options.protocols,
               defaultProtocol: this.options.defaultProtocol,
             })
           ) {
-            return false
+            return false;
           }
 
           return chain()
             .toggleMark(this.name, attributes, { extendEmptyMarkRange: true })
-            .setMeta('preventAutolink', true)
-            .run()
+            .setMeta("preventAutolink", true)
+            .run();
         },
 
       unsetLink:
@@ -423,49 +427,49 @@ export const Link = Mark.create<LinkOptions>({
         ({ chain }) => {
           return chain()
             .unsetMark(this.name, { extendEmptyMarkRange: true })
-            .setMeta('preventAutolink', true)
-            .run()
+            .setMeta("preventAutolink", true)
+            .run();
         },
-    }
+    };
   },
 
   addInputRules() {
     if (!this.options.markdownLinks) {
-      return []
+      return [];
     }
 
     return [
       markdownLinkInputRule({
         type: this.type,
-        isAllowedHref: href =>
+        isAllowedHref: (href) =>
           this.options.isAllowedUri(href, {
-            defaultValidate: url => !!isAllowedUri(url, this.options.protocols),
+            defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
             protocols: this.options.protocols,
             defaultProtocol: this.options.defaultProtocol,
           }),
       }),
-    ]
+    ];
   },
 
   addPasteRules() {
     const findPlainUrls = (text: string): PasteRuleMatch[] => {
-      const foundLinks: PasteRuleMatch[] = []
+      const foundLinks: PasteRuleMatch[] = [];
 
       if (text) {
-        const { protocols, defaultProtocol } = this.options
+        const { protocols, defaultProtocol } = this.options;
         const links = find(text).filter(
-          item =>
+          (item) =>
             item.isLink &&
             this.options.isAllowedUri(item.value, {
-              defaultValidate: href => !!isAllowedUri(href, protocols),
+              defaultValidate: (href) => !!isAllowedUri(href, protocols),
               protocols,
               defaultProtocol,
             }),
-        )
+        );
 
-        links.forEach(link => {
+        links.forEach((link) => {
           if (!this.options.shouldAutoLink(link.value)) {
-            return
+            return;
           }
 
           foundLinks.push({
@@ -474,59 +478,59 @@ export const Link = Mark.create<LinkOptions>({
               href: link.href,
             },
             index: link.start,
-          })
-        })
+          });
+        });
       }
 
-      return foundLinks
-    }
+      return foundLinks;
+    };
 
     if (this.options.markdownLinks) {
       return [
         markdownLinkPasteRule({
           type: this.type,
-          isAllowedHref: href =>
+          isAllowedHref: (href) =>
             this.options.isAllowedUri(href, {
-              defaultValidate: url => !!isAllowedUri(url, this.options.protocols),
+              defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
               protocols: this.options.protocols,
               defaultProtocol: this.options.defaultProtocol,
             }),
           findPlainUrls,
         }),
-      ]
+      ];
     }
 
     return [
       markPasteRule({
         find: findPlainUrls,
         type: this.type,
-        getAttributes: match => {
+        getAttributes: (match) => {
           return {
             href: match.data?.href,
-          }
+          };
         },
       }),
-    ]
+    ];
   },
 
   addProseMirrorPlugins() {
-    const plugins: Plugin[] = []
-    const { protocols, defaultProtocol } = this.options
+    const plugins: Plugin[] = [];
+    const { protocols, defaultProtocol } = this.options;
 
     if (this.options.autolink) {
       plugins.push(
         autolink({
           type: this.type,
           defaultProtocol: this.options.defaultProtocol,
-          validate: url =>
+          validate: (url) =>
             this.options.isAllowedUri(url, {
-              defaultValidate: href => !!isAllowedUri(href, protocols),
+              defaultValidate: (href) => !!isAllowedUri(href, protocols),
               protocols,
               defaultProtocol,
             }),
           shouldAutoLink: this.options.shouldAutoLink,
         }),
-      )
+      );
     }
 
     plugins.push(
@@ -534,10 +538,10 @@ export const Link = Mark.create<LinkOptions>({
         type: this.type,
         editor: this.editor,
         openOnClick:
-          this.options.openOnClick === 'whenNotEditable' ? true : this.options.openOnClick,
+          this.options.openOnClick === "whenNotEditable" ? true : this.options.openOnClick,
         enableClickSelection: this.options.enableClickSelection,
       }),
-    )
+    );
 
     if (this.options.linkOnPaste) {
       plugins.push(
@@ -547,9 +551,9 @@ export const Link = Mark.create<LinkOptions>({
           type: this.type,
           shouldAutoLink: this.options.shouldAutoLink,
         }),
-      )
+      );
     }
 
-    return plugins
+    return plugins;
   },
-})
+});

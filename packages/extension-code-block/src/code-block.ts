@@ -1,54 +1,54 @@
-import { mergeAttributes, Node, textblockTypeInputRule } from '@tiptap/core'
-import { Plugin, PluginKey, Selection, TextSelection } from '@tiptap/pm/state'
+import { mergeAttributes, Node, textblockTypeInputRule } from "@tiptap/core";
+import { Plugin, PluginKey, Selection, TextSelection } from "@tiptap/pm/state";
 
-const DEFAULT_TAB_SIZE = 4
+const DEFAULT_TAB_SIZE = 4;
 
 export interface CodeBlockOptions {
   /**
    * Adds a prefix to language classes that are applied to code tags.
    * @default 'language-'
    */
-  languageClassPrefix: string | null | undefined
+  languageClassPrefix: string | null | undefined;
   /**
    * Define whether the node should be exited on triple enter.
    * @default true
    */
-  exitOnTripleEnter: boolean | null | undefined
+  exitOnTripleEnter: boolean | null | undefined;
   /**
    * Define whether the node should be exited on arrow down if there is no node after it.
    * @default true
    */
-  exitOnArrowDown: boolean | null | undefined
+  exitOnArrowDown: boolean | null | undefined;
   /**
    * Define whether the node should be exited on arrow up if there is no node before it.
    * @default true
    */
-  exitOnArrowUp: boolean | null | undefined
+  exitOnArrowUp: boolean | null | undefined;
   /**
    * The default language.
    * @default null
    * @example 'js'
    */
-  defaultLanguage: string | null | undefined
+  defaultLanguage: string | null | undefined;
   /**
    * Enable tab key for indentation in code blocks.
    * @default false
    */
-  enableTabIndentation: boolean | null | undefined
+  enableTabIndentation: boolean | null | undefined;
   /**
    * The number of spaces to use for tab indentation.
    * @default 4
    */
-  tabSize: number | null | undefined
+  tabSize: number | null | undefined;
   /**
    * Custom HTML attributes that should be added to the rendered HTML tag.
    * @default {}
    * @example { class: 'foo' }
    */
-  HTMLAttributes: Record<string, any>
+  HTMLAttributes: Record<string, any>;
 }
 
-declare module '@tiptap/core' {
+declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     codeBlock: {
       /**
@@ -56,37 +56,37 @@ declare module '@tiptap/core' {
        * @param attributes Code block attributes
        * @example editor.commands.setCodeBlock({ language: 'javascript' })
        */
-      setCodeBlock: (attributes?: { language: string }) => ReturnType
+      setCodeBlock: (attributes?: { language: string }) => ReturnType;
       /**
        * Toggle a code block
        * @param attributes Code block attributes
        * @example editor.commands.toggleCodeBlock({ language: 'javascript' })
        */
-      toggleCodeBlock: (attributes?: { language: string }) => ReturnType
-    }
+      toggleCodeBlock: (attributes?: { language: string }) => ReturnType;
+    };
   }
 }
 
 /**
  * Matches a code block with backticks.
  */
-export const backtickInputRegex = /^```([a-z]+)?[\s\n]$/
+export const backtickInputRegex = /^```([a-z]+)?[\s\n]$/;
 
 /**
  * Matches a code block with tildes.
  */
-export const tildeInputRegex = /^~~~([a-z]+)?[\s\n]$/
+export const tildeInputRegex = /^~~~([a-z]+)?[\s\n]$/;
 
 /**
  * This extension allows you to create code blocks.
  * @see https://tiptap.dev/api/nodes/code-block
  */
 export const CodeBlock = Node.create<CodeBlockOptions>({
-  name: 'codeBlock',
+  name: "codeBlock",
 
   addOptions() {
     return {
-      languageClassPrefix: 'language-',
+      languageClassPrefix: "language-",
       exitOnTripleEnter: true,
       exitOnArrowDown: true,
       exitOnArrowUp: true,
@@ -94,14 +94,14 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
       enableTabIndentation: false,
       tabSize: DEFAULT_TAB_SIZE,
       HTMLAttributes: {},
-    }
+    };
   },
 
-  content: 'text*',
+  content: "text*",
 
-  marks: '',
+  marks: "",
 
-  group: 'block',
+  group: "block",
 
   code: true,
 
@@ -111,45 +111,45 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
     return {
       language: {
         default: this.options.defaultLanguage,
-        parseHTML: element => {
-          const { languageClassPrefix } = this.options
+        parseHTML: (element) => {
+          const { languageClassPrefix } = this.options;
 
           if (!languageClassPrefix) {
-            return null
+            return null;
           }
 
-          const classNames = [...(element.firstElementChild?.classList || [])]
+          const classNames = [...(element.firstElementChild?.classList || [])];
           const languages = classNames
-            .filter(className => className.startsWith(languageClassPrefix))
-            .map(className => className.replace(languageClassPrefix, ''))
-          const language = languages[0]
+            .filter((className) => className.startsWith(languageClassPrefix))
+            .map((className) => className.replace(languageClassPrefix, ""));
+          const language = languages[0];
 
           if (!language) {
-            return null
+            return null;
           }
 
-          return language
+          return language;
         },
         rendered: false,
       },
-    }
+    };
   },
 
   parseHTML() {
     return [
       {
-        tag: 'pre',
-        preserveWhitespace: 'full',
+        tag: "pre",
+        preserveWhitespace: "full",
       },
-    ]
+    ];
   },
 
   renderHTML({ node, HTMLAttributes }) {
     return [
-      'pre',
+      "pre",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
       [
-        'code',
+        "code",
         {
           class: node.attrs.language
             ? this.options.languageClassPrefix + node.attrs.language
@@ -157,282 +157,282 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
         },
         0,
       ],
-    ]
+    ];
   },
 
-  markdownTokenName: 'code',
+  markdownTokenName: "code",
 
   parseMarkdown: (token, helpers) => {
     if (
-      token.raw?.startsWith('```') === false &&
-      token.raw?.startsWith('~~~') === false &&
-      token.codeBlockStyle !== 'indented'
+      token.raw?.startsWith("```") === false &&
+      token.raw?.startsWith("~~~") === false &&
+      token.codeBlockStyle !== "indented"
     ) {
-      return []
+      return [];
     }
 
     return helpers.createNode(
-      'codeBlock',
+      "codeBlock",
       { language: token.lang || null },
       token.text ? [helpers.createTextNode(token.text)] : [],
-    )
+    );
   },
 
   renderMarkdown: (node, h) => {
-    let output = ''
-    const language = node.attrs?.language || ''
+    let output = "";
+    const language = node.attrs?.language || "";
 
     if (!node.content) {
-      output = `\`\`\`${language}\n\n\`\`\``
+      output = `\`\`\`${language}\n\n\`\`\``;
     } else {
-      const lines = [`\`\`\`${language}`, h.renderChildren(node.content), '```']
-      output = lines.join('\n')
+      const lines = [`\`\`\`${language}`, h.renderChildren(node.content), "```"];
+      output = lines.join("\n");
     }
 
-    return output
+    return output;
   },
 
   addCommands() {
     return {
       setCodeBlock:
-        attributes =>
+        (attributes) =>
         ({ commands }) => {
-          return commands.setNode(this.name, attributes)
+          return commands.setNode(this.name, attributes);
         },
       toggleCodeBlock:
-        attributes =>
+        (attributes) =>
         ({ commands }) => {
-          return commands.toggleNode(this.name, 'paragraph', attributes)
+          return commands.toggleNode(this.name, "paragraph", attributes);
         },
-    }
+    };
   },
 
   addKeyboardShortcuts() {
     return {
-      'Mod-Alt-c': () => this.editor.commands.toggleCodeBlock(),
+      "Mod-Alt-c": () => this.editor.commands.toggleCodeBlock(),
 
       // remove code block when at start of document or code block is empty
       Backspace: () => {
-        const { empty, $anchor } = this.editor.state.selection
-        const isAtStart = $anchor.pos === 1
+        const { empty, $anchor } = this.editor.state.selection;
+        const isAtStart = $anchor.pos === 1;
 
         if (!empty || $anchor.parent.type.name !== this.name) {
-          return false
+          return false;
         }
 
         if (isAtStart || !$anchor.parent.textContent.length) {
-          return this.editor.commands.clearNodes()
+          return this.editor.commands.clearNodes();
         }
 
-        return false
+        return false;
       },
 
       // handle tab indentation
       Tab: ({ editor }) => {
         if (!this.options.enableTabIndentation) {
-          return false
+          return false;
         }
 
-        const tabSize = this.options.tabSize ?? DEFAULT_TAB_SIZE
-        const { state } = editor
-        const { selection } = state
-        const { $from, empty } = selection
+        const tabSize = this.options.tabSize ?? DEFAULT_TAB_SIZE;
+        const { state } = editor;
+        const { selection } = state;
+        const { $from, empty } = selection;
 
         if ($from.parent.type !== this.type) {
-          return false
+          return false;
         }
 
-        const indent = ' '.repeat(tabSize)
+        const indent = " ".repeat(tabSize);
 
         if (empty) {
-          return editor.commands.insertContent(indent)
+          return editor.commands.insertContent(indent);
         }
 
         return editor.commands.command(({ tr }) => {
-          const { from, to } = selection
-          const text = state.doc.textBetween(from, to, '\n', '\n')
-          const lines = text.split('\n')
-          const indentedText = lines.map(line => indent + line).join('\n')
+          const { from, to } = selection;
+          const text = state.doc.textBetween(from, to, "\n", "\n");
+          const lines = text.split("\n");
+          const indentedText = lines.map((line) => indent + line).join("\n");
 
-          tr.replaceWith(from, to, state.schema.text(indentedText))
-          return true
-        })
+          tr.replaceWith(from, to, state.schema.text(indentedText));
+          return true;
+        });
       },
 
       // handle shift+tab reverse indentation
-      'Shift-Tab': ({ editor }) => {
+      "Shift-Tab": ({ editor }) => {
         if (!this.options.enableTabIndentation) {
-          return false
+          return false;
         }
 
-        const tabSize = this.options.tabSize ?? DEFAULT_TAB_SIZE
-        const { state } = editor
-        const { selection } = state
-        const { $from, empty } = selection
+        const tabSize = this.options.tabSize ?? DEFAULT_TAB_SIZE;
+        const { state } = editor;
+        const { selection } = state;
+        const { $from, empty } = selection;
 
         if ($from.parent.type !== this.type) {
-          return false
+          return false;
         }
 
         if (empty) {
           return editor.commands.command(({ tr }) => {
-            const { pos } = $from
-            const codeBlockStart = $from.start()
-            const codeBlockEnd = $from.end()
+            const { pos } = $from;
+            const codeBlockStart = $from.start();
+            const codeBlockEnd = $from.end();
 
-            const allText = state.doc.textBetween(codeBlockStart, codeBlockEnd, '\n', '\n')
-            const lines = allText.split('\n')
+            const allText = state.doc.textBetween(codeBlockStart, codeBlockEnd, "\n", "\n");
+            const lines = allText.split("\n");
 
-            let currentLineIndex = 0
-            let charCount = 0
-            const relativeCursorPos = pos - codeBlockStart
+            let currentLineIndex = 0;
+            let charCount = 0;
+            const relativeCursorPos = pos - codeBlockStart;
 
             for (let i = 0; i < lines.length; i += 1) {
               if (charCount + lines[i].length >= relativeCursorPos) {
-                currentLineIndex = i
-                break
+                currentLineIndex = i;
+                break;
               }
-              charCount += lines[i].length + 1
+              charCount += lines[i].length + 1;
             }
 
-            const currentLine = lines[currentLineIndex]
-            const leadingSpaces = currentLine.match(/^ */)?.[0] || ''
-            const spacesToRemove = Math.min(leadingSpaces.length, tabSize)
+            const currentLine = lines[currentLineIndex];
+            const leadingSpaces = currentLine.match(/^ */)?.[0] || "";
+            const spacesToRemove = Math.min(leadingSpaces.length, tabSize);
 
             if (spacesToRemove === 0) {
-              return true
+              return true;
             }
 
-            let lineStartPos = codeBlockStart
+            let lineStartPos = codeBlockStart;
             for (let i = 0; i < currentLineIndex; i += 1) {
-              lineStartPos += lines[i].length + 1
+              lineStartPos += lines[i].length + 1;
             }
 
-            tr.delete(lineStartPos, lineStartPos + spacesToRemove)
+            tr.delete(lineStartPos, lineStartPos + spacesToRemove);
 
-            const cursorPosInLine = pos - lineStartPos
+            const cursorPosInLine = pos - lineStartPos;
             if (cursorPosInLine <= spacesToRemove) {
-              tr.setSelection(TextSelection.create(tr.doc, lineStartPos))
+              tr.setSelection(TextSelection.create(tr.doc, lineStartPos));
             }
 
-            return true
-          })
+            return true;
+          });
         }
 
         return editor.commands.command(({ tr }) => {
-          const { from, to } = selection
-          const text = state.doc.textBetween(from, to, '\n', '\n')
-          const lines = text.split('\n')
+          const { from, to } = selection;
+          const text = state.doc.textBetween(from, to, "\n", "\n");
+          const lines = text.split("\n");
           const reverseIndentText = lines
-            .map(line => {
-              const leadingSpaces = line.match(/^ */)?.[0] || ''
-              const spacesToRemove = Math.min(leadingSpaces.length, tabSize)
-              return line.slice(spacesToRemove)
+            .map((line) => {
+              const leadingSpaces = line.match(/^ */)?.[0] || "";
+              const spacesToRemove = Math.min(leadingSpaces.length, tabSize);
+              return line.slice(spacesToRemove);
             })
-            .join('\n')
+            .join("\n");
 
-          tr.replaceWith(from, to, state.schema.text(reverseIndentText))
-          return true
-        })
+          tr.replaceWith(from, to, state.schema.text(reverseIndentText));
+          return true;
+        });
       },
 
       // exit node on triple enter
       Enter: ({ editor }) => {
         if (!this.options.exitOnTripleEnter) {
-          return false
+          return false;
         }
 
-        const { state } = editor
-        const { selection } = state
-        const { $from, empty } = selection
+        const { state } = editor;
+        const { selection } = state;
+        const { $from, empty } = selection;
 
         if (!empty || $from.parent.type !== this.type) {
-          return false
+          return false;
         }
 
-        const isAtEnd = $from.parentOffset === $from.parent.nodeSize - 2
-        const endsWithDoubleNewline = $from.parent.textContent.endsWith('\n\n')
+        const isAtEnd = $from.parentOffset === $from.parent.nodeSize - 2;
+        const endsWithDoubleNewline = $from.parent.textContent.endsWith("\n\n");
 
         if (!isAtEnd || !endsWithDoubleNewline) {
-          return false
+          return false;
         }
 
         return editor
           .chain()
           .command(({ tr }) => {
-            tr.delete($from.pos - 2, $from.pos)
+            tr.delete($from.pos - 2, $from.pos);
 
-            return true
+            return true;
           })
           .exitCode()
-          .run()
+          .run();
       },
 
       // exit node on arrow up if there is no node before it
       ArrowUp: ({ editor }) => {
         if (!this.options.exitOnArrowUp) {
-          return false
+          return false;
         }
 
-        const { state } = editor
-        const { selection } = state
-        const { $from, empty } = selection
+        const { state } = editor;
+        const { selection } = state;
+        const { $from, empty } = selection;
 
         if (!empty || $from.parent.type !== this.type) {
-          return false
+          return false;
         }
 
         if ($from.parentOffset !== 0) {
-          return false
+          return false;
         }
 
-        const before = $from.before()
+        const before = $from.before();
 
         if (before > 0) {
-          return false
+          return false;
         }
 
-        return editor.commands.insertDefaultBlock({ pos: before })
+        return editor.commands.insertDefaultBlock({ pos: before });
       },
 
       // exit node on arrow down
       ArrowDown: ({ editor }) => {
         if (!this.options.exitOnArrowDown) {
-          return false
+          return false;
         }
 
-        const { state } = editor
-        const { selection, doc } = state
-        const { $from, empty } = selection
+        const { state } = editor;
+        const { selection, doc } = state;
+        const { $from, empty } = selection;
 
         if (!empty || $from.parent.type !== this.type) {
-          return false
+          return false;
         }
 
-        const isAtEnd = $from.parentOffset === $from.parent.nodeSize - 2
+        const isAtEnd = $from.parentOffset === $from.parent.nodeSize - 2;
 
         if (!isAtEnd) {
-          return false
+          return false;
         }
 
-        const after = $from.after()
+        const after = $from.after();
 
         if (after === undefined) {
-          return false
+          return false;
         }
 
-        const nodeAfter = doc.nodeAt(after)
+        const nodeAfter = doc.nodeAt(after);
 
         if (nodeAfter) {
           return editor.commands.command(({ tr }) => {
-            tr.setSelection(Selection.near(doc.resolve(after)))
-            return true
-          })
+            tr.setSelection(Selection.near(doc.resolve(after)));
+            return true;
+          });
         }
 
-        return editor.commands.exitCode()
+        return editor.commands.exitCode();
       },
-    }
+    };
   },
 
   addInputRules() {
@@ -440,18 +440,18 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
       textblockTypeInputRule({
         find: backtickInputRegex,
         type: this.type,
-        getAttributes: match => ({
+        getAttributes: (match) => ({
           language: match[1],
         }),
       }),
       textblockTypeInputRule({
         find: tildeInputRegex,
         type: this.type,
-        getAttributes: match => ({
+        getAttributes: (match) => ({
           language: match[1],
         }),
       }),
-    ]
+    ];
   },
 
   addProseMirrorPlugins() {
@@ -459,56 +459,56 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
       // this plugin creates a code block for pasted content from VS Code
       // we can also detect the copied code language
       new Plugin({
-        key: new PluginKey('codeBlockVSCodeHandler'),
+        key: new PluginKey("codeBlockVSCodeHandler"),
         props: {
           handlePaste: (view, event) => {
             if (!event.clipboardData) {
-              return false
+              return false;
             }
 
             // don’t create a new code block within code blocks
             if (this.editor.isActive(this.type.name)) {
-              return false
+              return false;
             }
 
-            const text = event.clipboardData.getData('text/plain')
-            const vscode = event.clipboardData.getData('vscode-editor-data')
-            const vscodeData = vscode ? JSON.parse(vscode) : undefined
-            const language = vscodeData?.mode
+            const text = event.clipboardData.getData("text/plain");
+            const vscode = event.clipboardData.getData("vscode-editor-data");
+            const vscodeData = vscode ? JSON.parse(vscode) : undefined;
+            const language = vscodeData?.mode;
 
             if (!text || !language) {
-              return false
+              return false;
             }
 
-            const { tr, schema } = view.state
+            const { tr, schema } = view.state;
 
             // prepare a text node
             // strip carriage return chars from text pasted as code
             // see: https://github.com/ProseMirror/prosemirror-view/commit/a50a6bcceb4ce52ac8fcc6162488d8875613aacd
-            const textNode = schema.text(text.replace(/\r\n?/g, '\n'))
+            const textNode = schema.text(text.replace(/\r\n?/g, "\n"));
 
             // create a code block with the text node
             // replace selection with the code block
-            tr.replaceSelectionWith(this.type.create({ language }, textNode))
+            tr.replaceSelectionWith(this.type.create({ language }, textNode));
 
             if (tr.selection.$from.parent.type !== this.type) {
               // put cursor inside the newly created code block
               tr.setSelection(
                 TextSelection.near(tr.doc.resolve(Math.max(0, tr.selection.from - 2))),
-              )
+              );
             }
 
             // store meta information
             // this is useful for other plugins that depends on the paste event
             // like the paste rule plugin
-            tr.setMeta('paste', true)
+            tr.setMeta("paste", true);
 
-            view.dispatch(tr)
+            view.dispatch(tr);
 
-            return true
+            return true;
           },
         },
       }),
-    ]
+    ];
   },
-})
+});

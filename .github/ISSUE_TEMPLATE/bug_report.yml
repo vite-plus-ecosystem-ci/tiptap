@@ -1,8 +1,8 @@
 name: Bug Report
 description: Found a bug in the editor core or one of the extensions? Report it here to help us improve.
 
-labels: ['status: triage']
-type: 'Bug'
+labels: ["status: triage"]
+type: "Bug"
 
 body:
   - type: markdown
@@ -79,4 +79,4 @@ body:
       description: Add useful screenshots, videos, or other short details. Avoid long explanations.
   - type: markdown
     attributes:
-      value: 'Thank you for helping us improve our open-source projects by reporting this issue!'
+      value: "Thank you for helping us improve our open-source projects by reporting this issue!"
