@@ -84,6 +84,7 @@ export default defineConfig({
     cache: { scripts: true, tasks: true },
   },
   test: {
+    clearMocks: false,
     environment: 'happy-dom',
     include: ['packages/**/*.test.ts', 'packages/**/*.spec.ts'],
     exclude: ['demos/**', 'tests/**', '**/node_modules/**'],

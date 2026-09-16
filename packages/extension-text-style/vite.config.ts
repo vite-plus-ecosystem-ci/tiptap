@@ -13,6 +13,7 @@ const entries = [
 ]
 
 export default defineConfig({
+  test: { clearMocks: false },
   pack: entries.map(entry => ({
     entry: [entry],
     tsconfig: '../../tsconfig.build.json',

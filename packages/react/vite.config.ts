@@ -4,6 +4,7 @@ import { tsupCompatibleExtensions } from '../../pack.config.mjs'
 const entries = ['src/index.ts', 'src/menus/index.ts']
 
 export default defineConfig({
+  test: { clearMocks: false },
   pack: entries.map(entry => ({
     entry: [entry],
     tsconfig: '../../tsconfig.build.json',

@@ -2,8 +2,10 @@ import { defineConfig } from 'vite-plus'
 import { tsupCompatibleExtensions } from '../../pack.config.mjs'
 
 export default defineConfig({
+  test: { clearMocks: false },
   pack: [
     {
+      deps: { resolveDepSubpath: true },
       entry: ['src/index.ts'],
       // Use a local tsconfig with a wider rootDir so monorepo-only @tiptap/pm path
       // aliases can resolve without pulling external workspace files outside the program.
@@ -17,6 +19,7 @@ export default defineConfig({
       outExtensions: tsupCompatibleExtensions,
     },
     {
+      deps: { resolveDepSubpath: true },
       entry: ['src/jsx-runtime.ts'],
       tsconfig: '../../tsconfig.build.json',
       outDir: 'dist/jsx-runtime',
