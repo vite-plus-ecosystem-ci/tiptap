@@ -3,14 +3,24 @@ packages:
   - 'codemods/*'
   - 'demos'
 catalog:
-  vite: npm:@voidzero-dev/vite-plus-core@0.3.0
-  vite-plus: 0.3.0
+  vite: npm:@voidzero-dev/vite-plus-core@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d
+  vite-plus: 0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true
   iframe-resizer: true
 minimumReleaseAgeExclude:
   - '@tiptap/*'
+  - '@voidzero-dev/vite-plus-core@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d'
+  - '@voidzero-dev/vite-plus-darwin-arm64@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d'
+  - '@voidzero-dev/vite-plus-darwin-x64@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d'
+  - '@voidzero-dev/vite-plus-linux-arm64-gnu@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d'
+  - '@voidzero-dev/vite-plus-linux-arm64-musl@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d'
+  - '@voidzero-dev/vite-plus-linux-x64-gnu@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d'
+  - '@voidzero-dev/vite-plus-linux-x64-musl@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d'
+  - '@voidzero-dev/vite-plus-win32-arm64-msvc@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d'
+  - '@voidzero-dev/vite-plus-win32-x64-msvc@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d'
+  - vite-plus@0.0.0-commit.7aaf0908b976917d9dd32a3a6c8e740ad2cb151d
 overrides:
   '@rollup/pluginutils>picomatch': '2.3.2'
   'prosemirror-model': '^1.25.11'

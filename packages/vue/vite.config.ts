@@ -4,6 +4,12 @@ import { tsupCompatibleExtensions } from '../../pack.config.mjs'
 const entries = ['src/menus/index.ts', 'src/index.ts']
 
 export default defineConfig({
+  test: {
+    // Vitest v4 compatibility: preserve mock call history.
+    // Remove after tests no longer rely on calls from setup or earlier tests.
+    // https://vitest.dev/guide/migration/#clearmocks-is-enabled-by-default
+    clearMocks: false,
+  },
   pack: entries.map(entry => ({
     entry: [entry],
     tsconfig: '../../tsconfig.build.json',
