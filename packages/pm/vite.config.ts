@@ -3,6 +3,7 @@ import { tsupCompatibleExtensions } from '../../pack.config.mjs'
 
 export default defineConfig({
   pack: {
+    deps: { resolveDepSubpath: true },
     entry: [
       'changeset/index.ts',
       'commands/index.ts',
