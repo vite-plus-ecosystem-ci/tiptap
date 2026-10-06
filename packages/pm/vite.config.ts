@@ -3,6 +3,12 @@ import { tsupCompatibleExtensions } from '../../pack.config.mjs'
 
 export default defineConfig({
   pack: {
+    deps: {
+      // tsdown <0.23 compatibility: resolve external dependency subpaths.
+      // Remove to preserve subpath imports as written (the new default).
+      // https://tsdown.dev/options/dependencies#deps-resolvedepsubpath
+      resolveDepSubpath: true,
+    },
     entry: [
       'changeset/index.ts',
       'commands/index.ts',
