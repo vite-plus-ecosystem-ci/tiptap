@@ -3,8 +3,8 @@ packages:
   - 'codemods/*'
   - 'demos'
 catalog:
-  vite: npm:@voidzero-dev/vite-plus-core@0.3.3
-  vite-plus: 0.3.3
+  vite: npm:@voidzero-dev/vite-plus-core@0.0.0-commit.6a30b43184ad1c159091d51d728ee8c249392aa1
+  vite-plus: 0.0.0-commit.6a30b43184ad1c159091d51d728ee8c249392aa1
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true
